@@ -7,6 +7,8 @@ export default function Signup() {
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [number, setNumber] = useState(""); // Added phone state
+  const [address, setAddress] = useState(""); // Added address state
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [shake, setShake] = useState(false);
@@ -54,6 +56,22 @@ export default function Signup() {
       return;
     }
 
+    if (!number.trim()) {
+      // Validate phone number
+      setErrorMessage("Phone Number is required!");
+      setShowErrorPopup(true);
+      triggerShake();
+      return;
+    }
+
+    if (!address.trim()) {
+      // Validate address
+      setErrorMessage("Address is required!");
+      setShowErrorPopup(true);
+      triggerShake();
+      return;
+    }
+
     if (!role) {
       setErrorMessage("Please select a role!");
       setShowErrorPopup(true);
@@ -68,7 +86,14 @@ export default function Signup() {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName: name, email, password, role }),
+        body: JSON.stringify({
+          fullName: name,
+          email,
+          password,
+          role,
+          number,
+          address,
+        }),
       });
 
       const data = await response.json();
@@ -94,7 +119,7 @@ export default function Signup() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden w-3/4 max-w-4xl flex">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden w-3/4 max-w-4xl flex ">
         {/* Left Side - Form */}
         <div className="w-1/2 p-10">
           <h1 className="text-2xl font-bold text-gray-800">Grab N’ Go</h1>
@@ -102,7 +127,7 @@ export default function Signup() {
             Get Started Now
           </h2>
 
-          <form onSubmit={handleSubmit} className="mt-6">
+          <form onSubmit={handleSubmit} className="mt-2">
             <div>
               <label className="block text-gray-700 font-medium">Name</label>
               <input
@@ -115,7 +140,7 @@ export default function Signup() {
               />
             </div>
 
-            <div className="mt-4">
+            <div className="mt-2">
               <label className="block text-gray-700 font-medium">
                 Email Address
               </label>
@@ -124,14 +149,14 @@ export default function Signup() {
                 placeholder="Enter Your Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                className={`w-full px-4 py-1 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
                   shake ? "animate-shake border-red-500" : ""
                 }`}
                 required
               />
             </div>
 
-            <div className="mt-4">
+            <div className="mt-2">
               <label className="block text-gray-700 font-medium">
                 Password
               </label>
@@ -140,15 +165,43 @@ export default function Signup() {
                 placeholder="Enter Your Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                className={`w-full px-4 py-1 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
                   shake ? "animate-shake border-red-500" : ""
                 }`}
                 required
               />
             </div>
 
+            {/* Phone Number */}
+            <div className="mt-2">
+              <label className="block text-gray-700 font-medium">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                placeholder="Enter Your Phone Number"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                className="w-full px-4 py-1 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+            </div>
+
+            {/* Address */}
+            <div className="mt-2">
+              <label className="block text-gray-700 font-medium">Address</label>
+              <textarea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter Your Address"
+                rows="2"
+                className="w-full px-4 py-1 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              ></textarea>
+            </div>
+
             {/* Role Selection */}
-            <div className="mt-6">
+            <div className="mt-2">
               <label className="block text-gray-700 font-medium">
                 Please select a valid role to Signup
               </label>
@@ -182,12 +235,12 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="w-full mt-6 bg-red-500 text-white py-2 rounded-md text-lg font-semibold hover:bg-red-600 transition"
+              className="w-full mt-2 bg-red-500 text-white py-2 rounded-md text-lg font-semibold hover:bg-red-600 transition"
             >
               Sign Up
             </button>
 
-            <div className="flex items-center my-4">
+            <div className="flex items-center my-2">
               <hr className="flex-grow border-gray-300" />
               <span className="px-2 text-gray-500 text-sm">
                 Or Sign in with
@@ -195,21 +248,18 @@ export default function Signup() {
               <hr className="flex-grow border-gray-300" />
             </div>
 
-            <div className="flex justify-center space-x-4">
-              <button
-                type="button"
-                className="flex items-center border px-4 py-2 bg-gray-200 rounded-md transition ease-in-out hover:bg-red-400 hover:font-semibold"
-                onClick={() => navigate("/")}
-              >
-                Sign in with Google
-              </button>
-              <button
-                type="button"
-                className="flex items-center border px-4 py-2 bg-gray-200 rounded-md transition ease-in-out hover:bg-red-400 hover:font-semibold"
-                onClick={() => navigate("/")}
-              >
-                Sign in with Apple
-              </button>
+            <div className="flex justify-center">
+              <div className="w-1/2">
+                {" "}
+                {/* Container half width */}
+                <button
+                  type="button"
+                  className="flex items-center justify-center w-full border px-4 py-2 bg-gray-200 rounded-md transition ease-in-out hover:bg-red-400 hover:font-semibold"
+                  onClick={() => navigate("/")}
+                >
+                  Sign in
+                </button>
+              </div>
             </div>
           </form>
         </div>

@@ -9,6 +9,7 @@ import AllRestaurantsPage from "./components/AllRestaurantsPage";
 import TiffinPage from "./components/TiffinService";
 import AllTiffin from "./components/AllTiffin"; // ✅ Import AllTiffin component
 import TiffinRequest from "./components/TiffinRequest";
+import Page from "./components/Page";
 
 function App() {
   return (

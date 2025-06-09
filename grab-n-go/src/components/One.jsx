@@ -1,14 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import g8 from "../Images/g8.png";
+import { useNavigate } from "react-router-dom"; // import this
 
 export default function First() {
+  const [showProfile, setShowProfile] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [currentParent, setCurrentParent] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
-
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const toggleProfile = () => setShowProfile((prev) => !prev);
   const chatHistoryRef = useRef(null);
+  const navigate = useNavigate(); // useNavigate hook
+  const handleLogout = () => {
+    // You can also clear any auth here if needed
+    navigate("/"); // navigate to homepage
+  };
 
   const faqData = {
     greeting:
@@ -312,6 +320,51 @@ export default function First() {
     >
       {/* Black Overlay */}
       <div className="absolute inset-0 bg-black opacity-60"></div>
+      {/* Profile Button */}
+      <button
+        onClick={toggleProfile}
+        className="fixed top-5 left-5 z-20 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-3 font-semibold tracking-wide transition hover:scale-110"
+      >
+        <img
+          src={require("../Images/avatar.webp")}
+          alt="Avatar"
+          className="w-7 h-7"
+        />
+        {user.fullName}
+      </button>
+
+      {/* Profile Popup Card */}
+      {showProfile && (
+        <div className="fixed top-20 left-5 z-30 bg-white text-black w-72 p-5 rounded-2xl shadow-2xl border border-gray-300 animate-fade-in-down">
+          <h2 className="text-lg font-bold mb-3 text-center">User Profile</h2>
+          <div className="space-y-2 text-sm">
+            <p>
+              <strong>Name:</strong> {user.fullName || "N/A"}
+            </p>
+            <p>
+              <strong>Email:</strong> {user.email || "N/A"}
+            </p>
+            <p>
+              <strong>Phone:</strong> {user.number || "N/A"}
+            </p>
+            <p>
+              <strong>Address:</strong> {user.address || "N/A"}
+            </p>
+            <p>
+              <strong>Role:</strong>{" "}
+              {user.role
+                ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                : "N/A"}
+            </p>
+          </div>
+          <button
+            onClick={toggleProfile}
+            className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-1.5 rounded-lg text-sm hover:scale-110 transition-transform duration-300 ease-in-out"
+          >
+            Close
+          </button>
+        </div>
+      )}
 
       {/* Floating Chat Button */}
       <button
@@ -333,6 +386,13 @@ export default function First() {
           />
         </svg>
         Chat with Meena
+      </button>
+      {/* Logout Button below Chat Button */}
+      <button
+        onClick={handleLogout}
+        className="fixed top-[70px] right-5 z-20 bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center justify-center font-semibold tracking-wide transition hover:scale-125"
+      >
+        LogOut
       </button>
 
       {/* Chat Popup */}
@@ -484,11 +544,6 @@ export default function First() {
       <div className="relative z-10 text-center">
         <h1 className="text-5xl font-bold text-red-500">Grab N’ Go</h1>
         <p className="text-lg">Order the meal you want</p>
-        <input
-          type="text"
-          placeholder="Search for the meal here"
-          className="mt-4 px-4 py-2 w-[600px] max-w-full rounded-lg text-black shadow-md"
-        />
       </div>
     </div>
   );

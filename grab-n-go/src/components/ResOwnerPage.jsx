@@ -8,14 +8,21 @@ const ResOwner = () => {
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [restaurantImage, setRestaurantImage] = useState(null);
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // or sessionStorage if you're using that
+    navigate("/");
+  };
 
   const [newRestaurant, setNewRestaurant] = useState({
     name: "",
     location: "",
+    address: "", // ✅ New field
     contactNumber: "",
     email: "",
     openingHours: "",
     isOpen: true,
+    image: null,
   });
 
   const [menuInputs, setMenuInputs] = useState({});
@@ -26,10 +33,9 @@ const ResOwner = () => {
 
   const navigate = useNavigate();
 
-  // Simulated owner data (replace with real data or fetch)
   const [ownerInfo, setOwnerInfo] = useState({
-    name: "John Doe",
-    email: "owner@example.com",
+    fullName: "",
+    email: "",
   });
 
   const fetchRestaurants = async () => {
@@ -54,6 +60,10 @@ const ResOwner = () => {
   };
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setOwnerInfo(JSON.parse(storedUser));
+    }
     fetchRestaurants();
   }, []);
 
@@ -68,6 +78,8 @@ const ResOwner = () => {
   const handleAddRestaurant = async (e) => {
     e.preventDefault();
     setError("");
+
+    // Validate and parse openingHours as before
     let parsedHours = {};
     try {
       if (newRestaurant.openingHours.trim()) {
@@ -81,34 +93,50 @@ const ResOwner = () => {
       return;
     }
 
-    const payload = {
-      ...newRestaurant,
-      openingHours: parsedHours,
-    };
-
     try {
+      const formData = new FormData();
+      formData.append("name", newRestaurant.name);
+      formData.append("location", newRestaurant.location);
+      formData.append("address", newRestaurant.address); // ✅ ADD THIS LINE
+      formData.append("contactNumber", newRestaurant.contactNumber);
+      formData.append("email", newRestaurant.email);
+      formData.append("isOpen", newRestaurant.isOpen);
+      formData.append("openingHours", JSON.stringify(parsedHours));
+
+      if (restaurantImage) {
+        formData.append("image", restaurantImage);
+      }
+
       const res = await axios.post(
         "http://localhost:5000/api/restaurants",
-        payload,
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
       const newRes = res.data.data || res.data;
       setRestaurants((prev) => [...prev, newRes]);
+
+      // Reset form
       setNewRestaurant({
         name: "",
         location: "",
+        address: "", // ✅ Reset this too
         contactNumber: "",
         email: "",
         openingHours: "",
         isOpen: true,
       });
+      setRestaurantImage(null);
       setShowForm(false);
+      setError("");
     } catch (err) {
       console.error("Add restaurant error:", err);
-      setError("Failed to add restaurant (check all fields)");
+      setError("Failed to add restaurant (check all fields and image)");
     }
   };
 
@@ -274,11 +302,21 @@ const ResOwner = () => {
   return (
     <div className="relative max-w-6xl mx-auto p-4 pb-32">
       {/* Profile Navbar */}
-      <div className="flex justify-between items-center bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl shadow mb-6">
+      {/* Profile Navbar */}
+      <div className="flex justify-between items-center bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl shadow mb-6 relative">
         <div>
-          <h1 className="text-2xl font-bold">Welcome, {ownerInfo.name}</h1>
+          <h1 className="text-2xl font-bold">Welcome, {ownerInfo.fullName}</h1>
           <p className="text-sm">{ownerInfo.email}</p>
         </div>
+
+        {/* Logout Button on top-right inside navbar */}
+        <button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 bg-white text-blue-600 font-bold px-4 py-2 rounded-full shadow hover:bg-gray-100 transform hover:scale-110 transition duration-300"
+          title="Logout"
+        >
+          Logout
+        </button>
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -510,6 +548,15 @@ const ResOwner = () => {
               />
               <input
                 type="text"
+                name="address"
+                placeholder="Full Address"
+                value={newRestaurant.address}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+              <input
+                type="text"
                 name="contactNumber"
                 placeholder="Contact Number"
                 value={newRestaurant.contactNumber}
@@ -541,6 +588,13 @@ const ResOwner = () => {
                 />
                 <span>Is Open</span>
               </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setRestaurantImage(e.target.files[0])}
+                className="w-full border p-2 rounded"
+              />
+
               <button
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"

@@ -39,19 +39,55 @@ export const getMyRestaurants = async (req, res) => {
   }
 };
 
-// Create a new restaurant (Owner only)
 export const addRestaurant = async (req, res) => {
   try {
+    const {
+      name,
+      location,
+      address,
+      contactNumber,
+      email,
+      openingHours,
+      isOpen,
+    } = req.body;
+
+    // Parse openingHours JSON string into an object for Map type
+    let parsedOpeningHours = null;
+    if (openingHours) {
+      try {
+        const obj = JSON.parse(openingHours);
+        parsedOpeningHours = new Map(Object.entries(obj));
+      } catch (err) {
+        return res
+          .status(400)
+          .json({ message: "Invalid openingHours JSON format" });
+      }
+    }
+
+    // Convert isOpen string to boolean
+    const parsedIsOpen = isOpen === "true" || isOpen === true;
+
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+
     const restaurant = await Restaurant.create({
-      ...req.body,
-      owner: req.user._id, // enforce owner
+      name,
+      location,
+      address, // <--- added here
+      contactNumber,
+      email,
+      openingHours: parsedOpeningHours,
+      isOpen: parsedIsOpen,
+      image,
+      owner: req.user._id,
     });
+
     res.status(201).json(restaurant);
   } catch (error) {
     console.error("Error adding restaurant:", error);
-    res
-      .status(500)
-      .json({ message: "Failed to add restaurant", error: error.message });
+    res.status(500).json({
+      message: "Failed to add restaurant",
+      error: error.message,
+    });
   }
 };
 

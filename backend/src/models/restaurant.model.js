@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  address: { type: String, required: true }, // <--- Added this
   location: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
@@ -17,7 +18,11 @@ const restaurantSchema = new mongoose.Schema({
   rating: { type: Number, default: 0 }, // Average user rating
   totalRatings: { type: Number, default: 0 }, // Number of ratings
 
-  images: [String], // Array of image URLs
+  image: {
+    type: String,
+    default: null,
+  },
+  // Array of image URLs
   menu: [
     {
       // Optional menu items

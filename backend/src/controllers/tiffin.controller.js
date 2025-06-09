@@ -15,6 +15,8 @@ export const createTiffin = async (req, res) => {
       weeklyMenu,
       status,
       providesMonthlyMess,
+      address, // <-- Add address here
+      price,
     } = req.body;
 
     // Map weeklyMenu keys (capitalize) to weeklyPlan keys (lowercase)
@@ -37,6 +39,8 @@ export const createTiffin = async (req, res) => {
       weeklyPlan,
       messStartDate: startDate,
       providesMonthlyMess: providesMonthlyMess || false,
+      price, // ✅ Save the price
+      address, // <-- Save address
       owner: ownerId,
     });
 
@@ -55,7 +59,7 @@ export const getAllTiffins = async (req, res) => {
       .select(
         "name weeklyPlan messStartDate owner " +
           "providesMonthlyMess messApproved description status " +
-          "requests" // include the entire `requests` array
+          "requests price address" // include the entire `requests` array
       )
       .populate("owner", "fullName email")
       .populate("requests.user", "fullName email")

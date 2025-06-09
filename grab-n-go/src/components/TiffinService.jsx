@@ -17,6 +17,8 @@ const TiffinService = () => {
   const [tiffins, setTiffins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [price, setPrice] = useState(""); // new price state for Add form
+  const [address, setAddress] = useState("");
 
   // Form state for add
   const [name, setName] = useState("");
@@ -99,6 +101,8 @@ const TiffinService = () => {
         startDate,
         weeklyMenu,
         status,
+        price,
+        address, // Add address here if used
       };
 
       await axios.post(
@@ -519,9 +523,23 @@ const TiffinService = () => {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
+                  rows={1}
                   placeholder="Describe your tiffin service"
                   className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1 font-semibold" htmlFor="address">
+                  Address
+                </label>
+                <textarea
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  rows={3} // Makes it 3 rows tall
+                  className="w-full border rounded px-3 py-2 resize-none"
+                  placeholder="Enter address"
+                  required
                 />
               </div>
 
@@ -564,6 +582,26 @@ const TiffinService = () => {
                     />
                   </div>
                 ))}
+              </div>
+              {/* Add Price input field here */}
+              <div>
+                <label
+                  htmlFor="price"
+                  className="block font-semibold mb-2 text-gray-700"
+                >
+                  Price (₹)
+                </label>
+                <input
+                  id="price"
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter price"
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                />
               </div>
 
               <div>

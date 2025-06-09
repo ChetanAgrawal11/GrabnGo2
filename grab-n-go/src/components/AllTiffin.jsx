@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QRCode from "qrcode";
+import { motion } from "framer-motion";
 
 // Import jsPDF and html2canvas
 import jsPDF from "jspdf";
@@ -226,36 +227,53 @@ const AllTiffin = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <ToastContainer />
-      <h1 className="text-3xl font-bold mb-4 text-center">
-        All Tiffin Services
-      </h1>
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 overflow-hidden py-10 px-4">
+      {/* Animated Background Triangles */}
+      <motion.div
+        animate={{
+          x: [0, 50, 0],
+          y: [0, -30, 0],
+          rotate: [0, 360, 0],
+        }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-20 left-10 w-40 h-40 bg-gradient-to-tr from-purple-500 to-indigo-700 clip-triangle opacity-80"
+      />
 
-      {/* ====== Student’s Applied Tiffin Status (top section) ====== */}
-      {user?.role === "student" && (
-        <div className="mb-6 p-4 border rounded bg-gray-50">
-          <h2 className="text-xl font-semibold mb-2 text-gray-800">
-            Your Tiffin Status
-          </h2>
+      <motion.div
+        animate={{
+          x: [0, -40, 0],
+          y: [0, 40, 0],
+          rotate: [0, -360, 0],
+        }}
+        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-60 right-10 w-48 h-48 bg-gradient-to-tr from-pink-400 to-red-600 clip-triangle opacity-70"
+      />
 
-          {tiffins
-            .map((tiffin) => {
-              const match = (tiffin.requests || []).find(
-                (r) => r.user._id === user._id
-              );
-              return match
-                ? {
-                    name: tiffin.name,
-                    status: match.status,
-                    requestedAt: match.requestedAt,
-                    approvedAt: match.approvedAt,
-                    messStartDate: formatDate(tiffin.messStartDate),
-                  }
-                : null;
-            })
-            .filter(Boolean).length > 0 ? (
-            tiffins
+      <motion.div
+        animate={{
+          x: [0, 30, 0],
+          y: [0, -50, 0],
+          rotate: [0, 360, 0],
+        }}
+        transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-24 left-1/2 w-36 h-36 bg-gradient-to-tr from-blue-400 to-cyan-600 clip-triangle opacity-70"
+      />
+
+      <div className=" relative z-10 max-w-6xl mx-auto p-6">
+        <ToastContainer />
+        <h1 className="text-3xl font-bold mb-4 text-center">
+          All Tiffin Services
+        </h1>
+
+        {/* ====== Student’s Applied Tiffin Status (top section) ====== */}
+        {/* ====== Student’s Applied Tiffin Status (Top Section) ====== */}
+        {user?.role === "student" && (
+          <div className="mb-8 p-6 border border-gray-200 rounded-2xl bg-gradient-to-br from-white via-gray-50 to-white shadow-lg">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2 border-gray-200">
+              🍱 Your Tiffin Status
+            </h2>
+
+            {tiffins
               .map((tiffin) => {
                 const match = (tiffin.requests || []).find(
                   (r) => r.user._id === user._id
@@ -270,208 +288,266 @@ const AllTiffin = () => {
                     }
                   : null;
               })
-              .filter(Boolean)
-              .map(
-                (
-                  { name, status, requestedAt, approvedAt, messStartDate },
-                  idx
-                ) => (
-                  <div key={idx} className="mb-4">
-                    <div>
-                      <span className="font-medium">{name}:</span>{" "}
-                      <span
-                        className={`${
-                          status === "approved"
-                            ? "text-green-600"
-                            : status === "rejected"
-                            ? "text-red-600"
-                            : "text-yellow-600"
-                        } font-semibold`}
-                      >
-                        {typeof status === "string"
-                          ? status.charAt(0).toUpperCase() + status.slice(1)
-                          : ""}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-700 ml-2">
-                      <p>
-                        <strong>Requested At:</strong> {formatDate(requestedAt)}
-                      </p>
-                      {status === "approved" && (
-                        <>
-                          {approvedAt && (
+              .filter(Boolean).length > 0 ? (
+              tiffins
+                .map((tiffin) => {
+                  const match = (tiffin.requests || []).find(
+                    (r) => r.user._id === user._id
+                  );
+                  return match
+                    ? {
+                        name: tiffin.name,
+                        status: match.status,
+                        requestedAt: match.requestedAt,
+                        approvedAt: match.approvedAt,
+                        messStartDate: formatDate(tiffin.messStartDate),
+                      }
+                    : null;
+                })
+                .filter(Boolean)
+                .map(
+                  (
+                    { name, status, requestedAt, approvedAt, messStartDate },
+                    idx
+                  ) => (
+                    <div
+                      key={idx}
+                      className="mb-6 p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-semibold text-gray-700">
+                          {name}
+                        </span>
+                        <span
+                          className={`text-sm font-semibold px-3 py-1 rounded-full ${
+                            status === "approved"
+                              ? "bg-green-100 text-green-700"
+                              : status === "rejected"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+                          {typeof status === "string"
+                            ? status.charAt(0).toUpperCase() + status.slice(1)
+                            : ""}
+                        </span>
+                      </div>
+
+                      <div className="mt-2 ml-1 text-sm text-gray-600 space-y-3">
+                        <p>
+                          <strong>📅 Requested At:</strong>{" "}
+                          {formatDate(requestedAt)}
+                        </p>
+
+                        {status === "approved" && (
+                          <>
+                            {approvedAt && (
+                              <p>
+                                <strong>✅ Approved At:</strong>{" "}
+                                {formatDate(approvedAt)}
+                              </p>
+                            )}
                             <p>
-                              <strong>Approved At:</strong>{" "}
-                              {formatDate(approvedAt)}
+                              <strong>🍽️ Mess Start Date:</strong>{" "}
+                              {messStartDate}
                             </p>
-                          )}
-                          <p>
-                            <strong>Mess Start Date:</strong> {messStartDate}
-                          </p>
-                          {/* Show Download Card button when approved */}
-                          <button
-                            onClick={() =>
-                              handleDownloadCard(
-                                name,
-                                user.fullName || user.name,
-                                requestedAt,
-                                approvedAt
-                              )
-                            }
-                            className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-                          >
-                            Download Tiffin Card
-                          </button>
-                        </>
+
+                            <button
+                              onClick={() =>
+                                handleDownloadCard(
+                                  name,
+                                  user.fullName || user.name,
+                                  requestedAt,
+                                  approvedAt
+                                )
+                              }
+                              className="mt-8 inline-block bg-blue-600 text-white px-4 py-2  rounded-full hover:bg-blue-700 transition hover:scale-110"
+                            >
+                              🎫 Download Tiffin Card
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )
+                )
+            ) : (
+              <p className="text-gray-600 italic">
+                You haven’t applied to any tiffin yet.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ====== List of All Tiffin Services ====== */}
+        {/* ====== List of All Tiffin Services ====== */}
+        {tiffins.length === 0 ? (
+          <p className="text-center text-gray-600 italic mt-8">
+            No tiffin services found.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {tiffins.map((tiffin) => {
+              const requests = tiffin.requests || [];
+
+              return (
+                <div
+                  key={tiffin._id}
+                  className="rounded-2xl p-6 bg-white shadow-md hover:shadow-xl transition border border-gray-100"
+                >
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    {tiffin.name || "Unnamed Service"}
+                  </h2>
+                  <p className="text-gray-600 mb-1">
+                    <strong>📍 Address:</strong>{" "}
+                    {tiffin.address || "Not specified"}
+                  </p>
+                  <p className="text-gray-600 mb-1">
+                    <strong>📆 Mess Start Date:</strong>{" "}
+                    {formatDate(tiffin.messStartDate)}
+                  </p>
+                  <p className="text-gray-600 mb-1">
+                    <strong>👨‍🍳 Owner Name:</strong>{" "}
+                    {tiffin.owner?.fullName || "Not available"}
+                  </p>
+                  <p className="text-gray-600 mb-3">
+                    <strong>📧 Owner Email:</strong>{" "}
+                    {tiffin.owner?.email || "Not available"}
+                  </p>
+
+                  <div className="mb-4">
+                    <h3 className="font-semibold mb-1 text-gray-700">
+                      🍽️ Weekly Menu
+                    </h3>
+                    {tiffin.weeklyPlan &&
+                    Object.keys(tiffin.weeklyPlan).length > 0 ? (
+                      <ul className="list-disc list-inside text-gray-700 text-sm">
+                        {Object.entries(tiffin.weeklyPlan).map(
+                          ([day, menu]) => (
+                            <li key={day} className="capitalize">
+                              <span className="font-medium">{day}:</span>{" "}
+                              {menu || "No menu provided"}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="italic text-gray-500 text-sm">
+                        No weekly menu available.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <span className="inline-block bg-yellow-100 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-sm">
+                      💰 Price: ₹
+                      {tiffin.price != null ? tiffin.price.toFixed(2) : "N/A"}{" "}
+                      /month
+                    </span>
+                  </div>
+
+                  {/* Student Section */}
+                  {user?.role === "student" ? (
+                    <>
+                      {requests.some(
+                        (r) =>
+                          r.user._id === user._id && r.status === "approved"
+                      ) ? (
+                        <p className="text-green-600 font-semibold">
+                          ✅ You are subscribed to this tiffin.
+                        </p>
+                      ) : requests.some(
+                          (r) =>
+                            r.user._id === user._id && r.status === "pending"
+                        ) ? (
+                        <p className="text-yellow-600 font-semibold">
+                          ⏳ Your request is pending approval.
+                        </p>
+                      ) : (
+                        <button
+                          onClick={() => handleRequest(tiffin._id)}
+                          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition"
+                        >
+                          📩 Request Subscription
+                        </button>
+                      )}
+                    </>
+                  ) : user?.role === "owner" &&
+                    tiffin.owner._id === user._id ? (
+                    <div className="mt-4">
+                      <h3 className="font-semibold text-gray-700 mb-2">
+                        👥 Student Requests
+                      </h3>
+                      {requests.length === 0 ? (
+                        <p className="italic text-gray-500 text-sm">
+                          No requests yet.
+                        </p>
+                      ) : (
+                        <ul className="space-y-2">
+                          {requests.map(({ user: reqUser, status }) => (
+                            <li
+                              key={reqUser._id}
+                              className="flex items-center justify-between text-sm text-gray-700"
+                            >
+                              <span>
+                                {reqUser.fullName} ({reqUser.email}) –{" "}
+                                <span
+                                  className={`font-semibold ${
+                                    status === "approved"
+                                      ? "text-green-600"
+                                      : status === "rejected"
+                                      ? "text-red-600"
+                                      : "text-yellow-600"
+                                  }`}
+                                >
+                                  {status.charAt(0).toUpperCase() +
+                                    status.slice(1)}
+                                </span>
+                              </span>
+                              {status === "pending" && (
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() =>
+                                      handleRequestStatusChange(
+                                        tiffin._id,
+                                        reqUser._id,
+                                        true
+                                      )
+                                    }
+                                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleRequestStatusChange(
+                                        tiffin._id,
+                                        reqUser._id,
+                                        false
+                                      )
+                                    }
+                                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
                       )}
                     </div>
-                  </div>
-                )
-              )
-          ) : (
-            <p className="text-gray-600 italic">
-              You haven’t applied to any tiffin yet.
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* ====== List of All Tiffin Services ====== */}
-      {tiffins.length === 0 ? (
-        <p className="text-center text-gray-600">No tiffin services found.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tiffins.map((tiffin) => {
-            const requests = tiffin.requests || [];
-
-            return (
-              <div
-                key={tiffin._id}
-                className="border rounded-lg p-6 shadow hover:shadow-lg transition bg-white"
-              >
-                <h2 className="text-xl font-semibold mb-2">
-                  {tiffin.name || "Unnamed Service"}
-                </h2>
-                <p className="mb-1">
-                  <strong>Area:</strong> {tiffin.area || "Not specified"}
-                </p>
-                <p className="mb-3">
-                  <strong>Mess Start Date:</strong>{" "}
-                  {formatDate(tiffin.messStartDate)}
-                </p>
-
-                <div className="mb-4">
-                  <strong className="block mb-1">Weekly Menu:</strong>
-                  {tiffin.weeklyPlan &&
-                  Object.keys(tiffin.weeklyPlan).length > 0 ? (
-                    <ul className="list-disc list-inside text-gray-700">
-                      {Object.entries(tiffin.weeklyPlan).map(([day, menu]) => (
-                        <li key={day} className="capitalize">
-                          <span className="font-medium">{day}:</span>{" "}
-                          {menu || "No menu provided"}
-                        </li>
-                      ))}
-                    </ul>
                   ) : (
-                    <p className="italic text-gray-500">
-                      No weekly menu available.
+                    <p className="text-sm text-gray-500 italic">
+                      Only students can request subscriptions.
                     </p>
                   )}
                 </div>
-
-                {user?.role === "student" ? (
-                  <>
-                    {requests.some(
-                      (r) => r.user._id === user._id && r.status === "approved"
-                    ) ? (
-                      <p className="text-green-600 font-semibold">
-                        You are subscribed to this tiffin.
-                      </p>
-                    ) : requests.some(
-                        (r) => r.user._id === user._id && r.status === "pending"
-                      ) ? (
-                      <p className="text-yellow-600 font-semibold">
-                        Your request is pending approval.
-                      </p>
-                    ) : (
-                      <button
-                        onClick={() => handleRequest(tiffin._id)}
-                        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                      >
-                        Request Subscription
-                      </button>
-                    )}
-                  </>
-                ) : user?.role === "owner" && tiffin.owner._id === user._id ? (
-                  <div className="mt-4">
-                    <h3 className="font-semibold mb-2">Student Requests:</h3>
-                    {requests.length === 0 ? (
-                      <p className="italic text-gray-500">No requests yet.</p>
-                    ) : (
-                      <ul>
-                        {requests.map(({ user: reqUser, status }) => (
-                          <li
-                            key={reqUser._id}
-                            className="mb-2 flex items-center justify-between"
-                          >
-                            <span>
-                              {reqUser.fullName} ({reqUser.email}) –{" "}
-                              <span
-                                className={
-                                  status === "approved"
-                                    ? "text-green-600 font-semibold"
-                                    : status === "rejected"
-                                    ? "text-red-600 font-semibold"
-                                    : "text-yellow-600 font-semibold"
-                                }
-                              >
-                                {status.charAt(0).toUpperCase() +
-                                  status.slice(1)}
-                              </span>
-                            </span>
-                            {status === "pending" && (
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    handleRequestStatusChange(
-                                      tiffin._id,
-                                      reqUser._id,
-                                      true
-                                    )
-                                  }
-                                  className="mr-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
-                                >
-                                  Approve
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleRequestStatusChange(
-                                      tiffin._id,
-                                      reqUser._id,
-                                      false
-                                    )
-                                  }
-                                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 italic">
-                    Only students can request subscriptions.
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -29,3 +29,6 @@ code {
 .animate-fade-in-up {
   animation: fade-in-up 0.2s ease-out;
 }
+.clip-triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}

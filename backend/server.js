@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 import connectMongoDB from "./src/db/connectMongoDB.js";
 
 import authRoutes from "./src/routes/auth.route.js";
@@ -12,15 +13,18 @@ dotenv.config();
 
 const app = express();
 
-// Configure CORS for requests with credentials
+// Enable CORS with credentials
 app.use(
   cors({
-    origin: "http://localhost:3000", // your frontend origin
-    credentials: true, // allow cookies and auth headers
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
 app.use(express.json());
+
+// ✅ Serve uploaded images statically
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 // API routes
 app.use("/api/auth", authRoutes);
@@ -28,7 +32,7 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/tiffins", tiffinRoutes);
 app.use("/api/menus", menuRoutes);
 
-// Connect to MongoDB and start server
+// Start server
 const PORT = process.env.PORT || 5000;
 connectMongoDB().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -65,8 +65,21 @@ export default function AllRestaurantsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all duration-300"
+              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all duration-300 flex flex-col"
             >
+              {/* Restaurant Image */}
+              {rest.image ? (
+                <img
+                  src={`http://localhost:5000${rest.image}`}
+                  alt={rest.name}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-500">
+                  No Image
+                </div>
+              )}
+
               <h2 className="text-2xl font-semibold text-indigo-700 mb-2">
                 {rest.name}
               </h2>
@@ -78,12 +91,13 @@ export default function AllRestaurantsPage() {
                   <span className="font-medium">Location:</span> {rest.location}
                 </p>
               )}
-              {rest.contact && (
+              {rest.contactNumber && (
                 <p className="text-gray-600 mb-1">
-                  <span className="font-medium">Contact:</span> {rest.contact}
+                  <span className="font-medium">Contact:</span>{" "}
+                  {rest.contactNumber}
                 </p>
               )}
-              {rest.owner && (
+              {rest.owner && rest.owner.name && (
                 <p className="text-gray-600 mb-1">
                   <span className="font-medium">Owner:</span> {rest.owner.name}
                 </p>
@@ -106,7 +120,7 @@ export default function AllRestaurantsPage() {
                   <ul className="list-disc list-inside">
                     {rest.menu.map((menuItem, idx) => (
                       <motion.li
-                        key={menuItem._id}
+                        key={menuItem._id || idx}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}

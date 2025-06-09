@@ -14,6 +14,11 @@ const tiffinSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String }, // optional
   status: { type: String, default: "Inactive" }, // optional
+  address: {
+    type: String,
+
+    trim: true,
+  },
 
   area: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -29,6 +34,7 @@ const tiffinSchema = new mongoose.Schema({
     saturday: String,
     sunday: String,
   },
+  price: { type: Number, required: true }, // ✅ Added price field
 
   messStartDate: Date, // When owner starts mess
   requestStartDate: Date, // When user requests to start mess
