@@ -497,6 +497,14 @@ const ResOwner = () => {
           </li>
         ))}
       </ul>
+      {/* Tiffin Service Navigation Button */}
+      <button
+        onClick={() => navigate("/canteenservice")}
+        className="fixed bottom-36   right-6 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110 "
+        title="Go to Tiffin Service"
+      >
+        Go to Canteen Service
+      </button>
 
       {/* Floating Add Restaurant Button */}
       <button
